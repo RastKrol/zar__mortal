@@ -70,8 +70,8 @@ function elHP() {
   return document.querySelector(`.player${this.player} .life`);
 }
 
-function renderHP(el) {
-  el.style.width = this.hp + "%";
+function renderHP() {
+  this.elHP().style.width = this.hp + "%";
 }
 
 function isWinner() {
