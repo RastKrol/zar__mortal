@@ -9,6 +9,9 @@ const $player1 = {
   attack: () => {
     console.log(this.name + " " + Fight);
   },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP,
 };
 const $player2 = {
   player: 2,
@@ -19,6 +22,9 @@ const $player2 = {
   attack: () => {
     console.log(this.name + " " + Fight);
   },
+  changeHP: changeHP,
+  elHP: elHP,
+  renderHP: renderHP,
 };
 
 const createElement = (tag, className) => {
@@ -50,58 +56,71 @@ const createPlayer = (playerObj) => {
   return $player;
 };
 
-const getRandomNumber = () => Math.ceil(Math.random() * 20);
+const getRandomNumber = (num) => Math.ceil(Math.random() * num);
 
-const changeHP = (player) => {
-  const $playerLife = document.querySelector(`.player${player.player} .life`);
-  player.hp -= getRandomNumber();
-  if (player.hp < 0) {
-    player.hp = 0;
+function changeHP(damage) {
+  if (this.hp - damage < 0) {
+    this.hp = 0;
+  } else {
+    this.hp -= damage;
   }
+}
 
-  $playerLife.style.width = player.hp + "%";
-};
+function elHP() {
+  return document.querySelector(`.player${this.player} .life`);
+}
 
-const gameResult = (name, res) => {
+function renderHP() {
+  this.elHP().style.width = this.hp + "%";
+}
+
+function isWinner() {
+  if ($player1.hp <= 0 || $player2.hp <= 0) {
+    $randomButton.disabled = true;
+    $arenas.appendChild(createReloadButton());
+
+    const reloadBtn = document.querySelector(".reloadWrap .button");
+    reloadBtn.addEventListener("click", restartGame);
+  }
+  if ($player1.hp === 0 && $player2.hp === 0) {
+    $arenas.appendChild(gameResult());
+    return;
+  }
+  if ($player1.hp <= 0) {
+    $arenas.appendChild(gameResult($player2.name));
+  }
+  if ($player2.hp <= 0) {
+    $arenas.appendChild(gameResult($player1.name));
+  }
+}
+
+function createReloadButton() {
+  const div = createElement("div", "reloadWrap");
+  const reloadBtn = createElement("button", "button");
+  reloadBtn.textContent = "Reload";
+  div.appendChild(reloadBtn);
+  return div;
+}
+
+function restartGame() {
+  window.location.reload(true);
+}
+
+const gameResult = (name) => {
   const $resultTitle = createElement("div", "resultTitle");
-  $resultTitle.textContent = `${name} ${res}!`;
+  if (name) {
+    $resultTitle.textContent = `${name} wins!`;
+  } else $resultTitle.textContent = `Draw`;
   return $resultTitle;
 };
 
-const restartGame = (player1, player2) => {
-  const $player1Life = document.querySelector(`.player1 .life`);
-  const $player2Life = document.querySelector(`.player2 .life`);
-  $arenas.removeChild(document.querySelector(".resultTitle"));
-  player1.hp = 100;
-  player2.hp = 100;
-  $player1Life.style.width = player1.hp + "%";
-  $player2Life.style.width = player2.hp + "%";
-};
-
 $randomButton.addEventListener("click", () => {
-  if ($randomButton.textContent === "New Game") {
-    restartGame($player1, $player2);
-    $randomButton.textContent = "Random";
-  } else {
-    changeHP($player1);
-    changeHP($player2);
-    if ($player1.hp === 0 && $player2.hp === 0) {
-      $arenas.appendChild(gameResult(" ", "Draw"));
-      // $randomButton.disabled = true;
-      $randomButton.textContent = "New Game";
-      return;
-    }
-    if ($player1.hp <= 0) {
-      $arenas.appendChild(gameResult($player2.name, "wins"));
-      // $randomButton.disabled = true;
-      $randomButton.textContent = "New Game";
-    }
-    if ($player2.hp <= 0) {
-      $arenas.appendChild(gameResult($player1.name, "wins"));
-      // $randomButton.disabled = true;
-      $randomButton.textContent = "New Game";
-    }
-  }
+  $player1.changeHP(getRandomNumber(20));
+  $player1.renderHP($player1.elHP());
+  $player2.changeHP(getRandomNumber(20));
+  $player2.renderHP($player2.elHP());
+
+  isWinner();
 });
 
 $arenas.appendChild(createPlayer($player1));
