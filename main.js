@@ -163,17 +163,17 @@ $form.addEventListener("submit", (e) => {
 
   if (attack.hit !== enemy.defence || enemy.hit !== attack.defence) {
     $player1.changeHP(enemy.value);
-    $player1.renderHP($player1.elHP());
+    $player1.renderHP();
     $player2.changeHP(attack.value);
-    $player2.renderHP($player2.elHP());
+    $player2.renderHP();
     isWinner();
   } else if (attack.hit !== enemy.defence && enemy.hit === attack.defence) {
     $player2.changeHP(enemy.value);
-    $player2.renderHP($player2.elHP());
+    $player2.renderHP();
     isWinner();
   } else if (attack.hit === enemy.defence && enemy.hit !== attack.defence) {
     $player1.changeHP(enemy.value);
-    $player1.renderHP($player1.elHP());
+    $player1.renderHP();
     isWinner();
   }
 });
