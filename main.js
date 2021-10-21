@@ -161,14 +161,8 @@ $form.addEventListener("submit", (e) => {
     item.checked = false;
   }
 
-  if (attack.hit !== enemy.defence || enemy.hit !== attack.defence) {
-    $player1.changeHP(enemy.value);
-    $player1.renderHP();
+  if (attack.hit !== enemy.defence && enemy.hit === attack.defence) {
     $player2.changeHP(attack.value);
-    $player2.renderHP();
-    isWinner();
-  } else if (attack.hit !== enemy.defence && enemy.hit === attack.defence) {
-    $player2.changeHP(enemy.value);
     $player2.renderHP();
     isWinner();
   } else if (attack.hit === enemy.defence && enemy.hit !== attack.defence) {
