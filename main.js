@@ -148,6 +148,7 @@ function isWinner() {
 
   if (player1.hp === 0 && player2.hp === 0) {
     $arenas.appendChild(gameResult());
+    $chat.insertAdjacentHTML("afterbegin", logs["draw"]);
     return;
   }
   if (player1.hp <= 0) {
@@ -239,7 +240,7 @@ const generateLogs = (type, attackPl, defencePl) => {
         .replace("[playerDefence]", defencePl.name)}`;
       break;
     default:
-      text = "Ничья - это тоже победа!";
+      "";
   }
   const el = `<p>${text}</p>`;
   $chat.insertAdjacentHTML("afterbegin", el);
