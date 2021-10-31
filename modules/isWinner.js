@@ -14,7 +14,7 @@ function createReloadButton() {
 }
 
 function restartGame() {
-  window.location.reload(true);
+  window.location.pathname = "starting_page.html";
 }
 
 const gameResult = (name) => {

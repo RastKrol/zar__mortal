@@ -10,16 +10,6 @@ const HIT = {
 
 const ATTACK = ["head", "body", "foot"];
 
-export const enemyAttack = () => {
-  const hit = ATTACK[getRandomNumber(3) - 1];
-  const defence = ATTACK[getRandomNumber(3) - 1];
-  return {
-    value: getRandomNumber(HIT[hit]),
-    hit,
-    defence,
-  };
-};
-
 export const playerAttack = () => {
   const attack = {};
 
