@@ -1,30 +1,50 @@
 import { createText } from "./helpers.js";
-import { enemyAttack, playerAttack } from "./attack.js";
+import { playerAttack } from "./attack.js";
 import { generateLogs } from "./displayingLogs.js";
 import isWinner from "./isWinner.js";
 import Player from "./playerClass.js";
 
-const $arenas = document.querySelector(".arenas");
-const $form = document.querySelector(".control");
-const $chat = document.querySelector(".chat");
+if (!localStorage.getItem("player")) {
+  window.location.pathname = "starting_page.html";
+}
+
+const {
+  id: idPl,
+  name: namePl,
+  hp: hpPl,
+  img: imgPl,
+} = JSON.parse(localStorage.getItem("player"));
+const {
+  id: idEnemy,
+  name: nameEnemy,
+  hp: hpEnemy,
+  img: imgEnemy,
+} = JSON.parse(localStorage.getItem("enemy"));
 
 export default class Game {
+  constructor() {
+    this.$arenas = document.querySelector(".arenas");
+    this.$form = document.querySelector(".control");
+    this.$chat = document.querySelector(".chat");
+  }
   start() {
     const player1 = new Player({
       player: 1,
-      name: "Scorpion",
-      hp: 100,
-      img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
+      id: idPl,
+      name: namePl,
+      hp: hpPl,
+      img: imgPl,
     });
 
     const player2 = new Player({
       player: 2,
-      name: "Subzero",
-      hp: 100,
-      img: "http://reactmarathon-api.herokuapp.com/assets/subzero.gif",
+      id: idEnemy,
+      name: nameEnemy,
+      hp: hpEnemy,
+      img: imgEnemy,
     });
 
-    $chat.insertAdjacentHTML(
+    this.$chat.insertAdjacentHTML(
       "afterbegin",
       `<p>${createText(player1, player2)}</p>`
     );
@@ -43,11 +63,24 @@ export default class Game {
   `;
     }
 
-    $form.addEventListener("submit", (e) => {
+    this.$form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const { value: eValue, hit: eHit, defence: eDefence } = enemyAttack();
 
-      const { value: pValue, hit: pHit, defence: pDefence } = playerAttack();
+      const { hit, defence } = playerAttack();
+
+      const players = await fetch(
+        "http://reactmarathon-api.herokuapp.com/api/mk/player/fight",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            hit: hit,
+            defence: defence,
+          }),
+        }
+      ).then((res) => res.json());
+
+      const { value: pValue, hit: pHit, defence: pDefence } = players.player1;
+      const { value: eValue, hit: eHit, defence: eDefence } = players.player2;
 
       if (pHit !== eDefence) {
         player2.changeHP(pValue);
@@ -63,7 +96,7 @@ export default class Game {
       isWinner(player1, player2);
     });
 
-    $arenas.insertAdjacentHTML("beforeend", createPlayer(player1));
-    $arenas.insertAdjacentHTML("beforeend", createPlayer(player2));
+    this.$arenas.insertAdjacentHTML("beforeend", createPlayer(player1));
+    this.$arenas.insertAdjacentHTML("beforeend", createPlayer(player2));
   }
 }

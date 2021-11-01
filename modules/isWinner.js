@@ -14,7 +14,7 @@ function createReloadButton() {
 }
 
 function restartGame() {
-  window.location.reload(true);
+  window.location.pathname = "starting_page.html";
 }
 
 const gameResult = (name) => {
@@ -25,7 +25,6 @@ const gameResult = (name) => {
 
 function isWinner(player1, player2) {
   if (player1.hp <= 0 || player2.hp <= 0) {
-    // $randomButton.disabled = true;
     $form.querySelector(".button").disabled = true;
     $arenas.insertAdjacentHTML("afterbegin", createReloadButton());
 
